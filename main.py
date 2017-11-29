@@ -29,19 +29,26 @@ class StreamListener(tweepy.StreamListener):
         print(status)
 
     def on_direct_message(self, status):
-        print("Listening")
         global otp
         text = status.direct_message['text']
         sender = status.direct_message['sender']['screen_name']
+        print(text + "  " + sender)
+
         class_msg = classify(text)
-        if(class_msg == 'Initiation'):
-            payment_details = parseText(text)
-            payment_details['sender'] = sender
-            _thread.start_new_thread(do_transaction, payment_details)
-        elif(classify == 'OTP'):
-            otp = int(text)
-        else:
-            api.send_direct_message(sender, "Invalid request")
+        if(sender != 'tweettopaybot'):
+            if(class_msg == 'Initiation'):
+                payment_details = parseText(text)
+                payment_details['sender'] = sender
+                _thread.start_new_thread(do_transaction, (payment_details,))
+            elif(classify == 'OTP'):
+                print("Inside OTP")
+                otp = int(text)
+                print(otp)
+            else:
+                api.send_direct_message(sender, text="Invalid request")
+
+    def on_error(self, status):
+        print(status)
 
 
 def parseText(text):
@@ -58,28 +65,46 @@ def parseText(text):
 
 
 def classify(text):
+    response = ''
     if(len(parseText(text)) != 0):
-        return "Initiation"
+        response = "Initiation"
     elif(len(text) == 6 and str.isdigit(text)):
-        return "OTP"
+        response = "OTP"
     else:
-        return "Garbage"
+        response = "Garbage"
+    print(response)
+    return response
 
 
 def do_transaction(payment_details):
+    global otp
     beneficiary_balance = get_balance(payment_details.get('beneficiary'))
     sender_balance = get_balance(payment_details.get('sender'))
+    sender = payment_details.get('sender')
+    beneficiary = payment_details.get('beneficiary')
+    amount = payment_details.get('amount')
+
     if(payment_details.get('amount') > sender_balance):
-        api.send_direct_message(sender, "Amount exceeds balance")
+        api.send_direct_message(sender, text="Amount exceeds balance")
+        return
     else:
         otp_code = random.randint(100000, 999999)
-        message = client.messages.create(to='+917337097978', from_="+12013993398", body=otp_code)
+        message = client.messages.create(
+            to='+917337097978', from_="+12013993398", body=otp_code)
 
-    while(otp != otp_code):
-        pass
+    while(True):
+        if(otp is None):
+            continue
+        else:
+            break
 
-    set_balance(payment_details.get('sender'), sender_balance - payment_details.get('amount'))
-    set_balance(payment_details.get('beneficiary'), beneficiary_balance + payment_details.get('amount'))
+    if(otp == otp_code):
+        print("OTP Matched!")
+        set_balance(sender, sender_balance - amount)
+        set_balance(beneficiary, beneficiary_balance + amount)
+        otp = None
+    else:
+        api.send_direct_message(sender, text="Incorrect OTP. Try new transaction.")
 
 
 def get_balance(handle):
@@ -111,7 +136,7 @@ def set_balance(handle, amount):
         "UPDATE Customers SET Balance = ? WHERE TwitterHandle = ?", (amount, handle,))
     balance = None
     for row in cursor.fetchall():
-    	balance = int(row[0])
+        balance = int(row[0])
     return balance
 
 

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{{ url_for('static', filename = 'style.css') }}">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+        <title>HSBC India: Personal, Corporate Banking, Credit Cards, NRI Services | HSBC India</title>
+    </head>
+    <body>
+        <div class="page-header">
+            <div class="branding">
+                <span><img src="{{ url_for('static', filename = 'hsbclogo.png') }}"></span> HSBC
+            </div>
+        </div>
+        <div class="sidebar">
+            <ul class="side-nav">
+                <li><a href=#>Account Information</a></li>
+                <li><a href=#>Transfer</a></li>
+                <li><a href=#>Payment and Wire</a></li>
+                <li><a href="#">Link Twitter</a></li>
+            </ul>
+        </div>
+        <div class="content">
+            <h3>Link your Twitter Account</h3>            
+            {% if(linked == False) %}
+            	<p>Click the button below to login to twitter</p>
+                <form action='logintotwitter' method='post'>
+                    <input type="submit" value="Login To Twitter">
+                </form>
+            {% else %}
+                <h3 class="message">You have already linked your twitter account! </h3><br>
+            {% endif %}
+        </div>
+    </body>
+</html>

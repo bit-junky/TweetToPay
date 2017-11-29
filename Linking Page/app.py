@@ -43,7 +43,7 @@ def login():
 @app.route('/home')
 def home():
     app.logger.info(is_linked(session.get('username')))
-    return render_template('home.html', linked=is_linked(session.get('username')))
+    return render_template('home.html')
 
 
 @app.route('/logintotwitter', methods=['GET', 'POST'])
@@ -57,7 +57,11 @@ def afterlink(resp):
     app.logger.info(session.get('username'))
     app.logger.info(resp['screen_name'])
     update_twitter(session.get('username'), resp['screen_name'])
-    return redirect(url_for('home', linked=True))
+    return redirect(url_for('home'))
+
+@app.route('/link')
+def link():
+	return render_template('link.html', linked=is_linked(session.get('username')))
 
 
 def authenticate(username, password):

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="{{ url_for('static', filename = 'style.css') }}">
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+		<title>HSBC</title>
+	</head>
+	<body>
+		<div class="page-header">
+			<div class="branding">
+				<span><img src="{{ url_for('static', filename = 'hsbclogo.png') }}"></span> HSBC
+			</div>
+		</div>
+		<form action='login' method='post'>
+			<h3>Login to your NetBanking account </h3><br>
+			<input type="text" name="username" placeholder="Username"><br>
+			<input type="password" name="password" placeholder="Password"><br>
+			<input type="submit" value="Login">
+		</form>
+	</body>
+</html>

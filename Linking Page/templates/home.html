@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="{{ url_for('static', filename = 'style.css') }}">
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+		<title>HSBC</title>
+	</head>
+	<body>
+		<div class="page-header">
+			<div class="branding">
+				<span><img src="{{ url_for('static', filename = 'hsbclogo.png') }}"></span> HSBC
+			</div>
+		</div>
+		{% if(linked == False) %}
+		<form action='logintotwitter' method='post'>
+			<h3>Link your Twitter Account </h3><br>
+			<input type="submit" value="Login To Twitter">
+		</form>
+		{% else %}
+			<h3 class="message">You have already linked your twitter account! </h3><br>
+		{% endif %}
+	</body>
+</html>
